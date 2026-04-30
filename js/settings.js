@@ -25,9 +25,21 @@ document.addEventListener('click', (e) => {
 // --- SETTINGS MANAGEMENT (JSON) ---
 function getSettings() {
     try {
-        return JSON.parse(localStorage.getItem('m3_settings')) || { theme: null, cardStyle: 'solid', favLayout: 'multi' };
+        return JSON.parse(localStorage.getItem('m3_settings')) || { 
+            theme: null, 
+            cardStyle: 'solid', 
+            favLayout: 'multi', 
+            folderStyle: 'icons',
+            header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' }
+        };
     } catch(e) {
-        return { theme: null, cardStyle: 'solid', favLayout: 'multi' };
+        return { 
+            theme: null, 
+            cardStyle: 'solid', 
+            favLayout: 'multi', 
+            folderStyle: 'icons',
+            header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' }
+        };
     }
 }
 function saveSettings(settings) {
@@ -119,6 +131,88 @@ const currentSettings = getSettings();
 if (currentSettings.theme) applyTheme(currentSettings.theme);
 if (currentSettings.cardStyle) applyCardStyle(currentSettings.cardStyle);
 if (currentSettings.favLayout) applyFavLayout(currentSettings.favLayout);
+
+// --- FOLDER STYLE MANAGEMENT ---
+const folderStyleIconsBtn = document.getElementById('folderStyleIconsBtn');
+const folderStyleCirclesBtn = document.getElementById('folderStyleCirclesBtn');
+
+function applyFolderStyle(style) {
+    folderStyleIconsBtn.classList.toggle('active', style === 'icons');
+    folderStyleCirclesBtn.classList.toggle('active', style === 'circles');
+    
+    let settings = getSettings();
+    if(settings.folderStyle !== style) {
+        settings.folderStyle = style;
+        saveSettings(settings);
+        // Notificar a collections.js que debe renderizar de nuevo
+        window.dispatchEvent(new Event('folderStyleChanged'));
+    }
+}
+
+folderStyleIconsBtn.addEventListener('click', () => applyFolderStyle('icons'));
+folderStyleCirclesBtn.addEventListener('click', () => applyFolderStyle('circles'));
+
+if (currentSettings.folderStyle) applyFolderStyle(currentSettings.folderStyle);
+
+// --- HEADER MANAGEMENT ---
+const headerText = document.getElementById('headerText');
+const headerIcon = document.getElementById('headerIcon');
+const headerIconContainer = document.getElementById('headerIconContainer');
+const headerTextInput = document.getElementById('headerTextInput');
+const headerIconInput = document.getElementById('headerIconInput');
+const uploadHeaderIconBtn = document.getElementById('uploadHeaderIconBtn');
+const headerIconUpload = document.getElementById('headerIconUpload');
+const resetHeaderBtn = document.getElementById('resetHeaderBtn');
+
+function applyHeaderSettings(h) {
+    if(!h) return;
+    
+    // Aplicar al DOM
+    headerText.textContent = h.text || 'Firefox';
+    headerTextInput.value = h.text || 'Firefox';
+    
+    if(h.iconType === 'image') {
+        headerIconContainer.innerHTML = `<img src="${h.iconValue}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">`;
+    } else {
+        headerIconContainer.innerHTML = `<span class="material-symbols-rounded" id="headerIcon" style="font-size: 40px;">${h.iconValue || 'language'}</span>`;
+    }
+    
+    headerIconInput.value = h.iconType === 'icon' ? h.iconValue : '';
+}
+
+function updateHeader(updates) {
+    let s = getSettings();
+    s.header = { ...s.header, ...updates };
+    saveSettings(s);
+    applyHeaderSettings(s.header);
+}
+
+headerTextInput.addEventListener('input', (e) => {
+    updateHeader({ text: e.target.value });
+});
+
+headerIconInput.addEventListener('input', (e) => {
+    updateHeader({ iconType: 'icon', iconValue: e.target.value });
+});
+
+uploadHeaderIconBtn.addEventListener('click', () => headerIconUpload.click());
+
+headerIconUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            updateHeader({ iconType: 'image', iconValue: ev.target.result });
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+resetHeaderBtn.addEventListener('click', () => {
+    updateHeader({ text: 'Firefox', iconType: 'icon', iconValue: 'language' });
+});
+
+if (currentSettings.header) applyHeaderSettings(currentSettings.header);
 
 
 // --- WALLPAPER MANAGEMENT (INDEXEDDB) ---

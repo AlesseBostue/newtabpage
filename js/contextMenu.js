@@ -75,7 +75,7 @@ function bindSiteItemEvents(anchorElement, itemData, onEdit, onDelete) {
     const moreBtn = document.createElement('button');
     moreBtn.className = 'more-options-btn';
     moreBtn.title = 'Más opciones';
-    moreBtn.innerHTML = '<img src="assets/more_vert.svg" width="16" height="16" class="svg-icon">';
+    moreBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 16px;">more_vert</span>';
     
     moreBtn.addEventListener('click', (e) => {
         e.preventDefault();

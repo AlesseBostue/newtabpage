@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva Pestaña</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <main class="dashboard">
         <!-- Columna Izquierda -->
@@ -15,11 +17,11 @@
                 <h1 id="time" class="display-large">00:00</h1>
                 <p id="date" class="title-medium">Cargando fecha...</p>
             </div>
-            
+
             <!-- Clima Placeholder -->
             <div class="card weather-card">
                 <div class="weather-icon">
-                    <img src="assets/weather.svg" alt="Weather" width="48" height="48" class="svg-icon weather-svg">
+                    <span class="material-symbols-rounded weather-svg" style="font-size: 48px;">partly_cloudy_day</span>
                 </div>
                 <div class="weather-info">
                     <div class="weather-temp">22°C</div>
@@ -34,11 +36,10 @@
         <section class="col-right">
             <!-- Header/Logo Navegador -->
             <div class="browser-header">
-                <div class="browser-logo">
-                    <!-- Firefox icon -->
-                    <img src="assets/firefox.svg" alt="Firefox" width="40" height="40" class="svg-icon">
+                <div class="browser-logo" id="headerIconContainer">
+                    <span class="material-symbols-rounded" id="headerIcon" style="font-size: 40px;">language</span>
                 </div>
-                <h2>Firefox Start</h2>
+                <h2 id="headerText">Firefox</h2>
             </div>
 
             <!-- Sitios Favoritos -->
@@ -46,7 +47,7 @@
                 <div class="card-header">
                     <h3>Favoritos</h3>
                     <button class="icon-btn" id="addFavBtn" title="Añadir Favorito">
-                        <img src="assets/add.svg" alt="Añadir" width="20" height="20" class="svg-icon">
+                        <span class="material-symbols-rounded">add</span>
                     </button>
                 </div>
                 <div class="sites-grid">
@@ -61,7 +62,7 @@
                 <div class="card-header">
                     <h3>Colecciones</h3>
                     <button class="icon-btn" id="addFolderBtn" title="Añadir Colección">
-                        <img src="assets/add.svg" alt="Añadir" width="20" height="20" class="svg-icon">
+                        <span class="material-symbols-rounded">add</span>
                     </button>
                 </div>
                 <div class="sites-grid" id="foldersGrid">
@@ -123,11 +124,12 @@
                 <div style="display: flex; gap: 8px;">
                     <button class="icon-btn" id="deleteFolderBtn" title="Eliminar Colección" style="color: #ff5252;">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                            <path
+                                d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
                         </svg>
                     </button>
                     <button class="icon-btn" id="addSiteToFolderBtn" title="Añadir a esta colección">
-                        <img src="assets/add.svg" alt="Añadir" width="20" height="20" class="svg-icon">
+                        <span class="material-symbols-rounded">add</span>
                     </button>
                 </div>
             </div>
@@ -150,7 +152,7 @@
 
     <!-- Botón Config Flotante -->
     <button class="fab config-btn" id="configBtn" aria-label="Configuración">
-        <img src="assets/config.svg" alt="Configuración" width="24" height="24" class="svg-icon">
+        <span class="material-symbols-rounded">settings</span>
     </button>
 
     <!-- Panel Lateral de Configuración -->
@@ -159,14 +161,10 @@
             <h3>Tema</h3>
             <div class="theme-options">
                 <button class="theme-btn theme-light-btn" id="lightModeBtn" aria-label="Modo Claro">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,7.65C6.9,8.45 6.42,9.36 6.11,10.35L3.34,7M20.65,7L17.88,10.35C17.58,9.36 17.1,8.45 16.5,7.65L20.65,7M3.34,17L6.11,13.65C6.42,14.64 6.9,15.55 7.5,16.35L3.34,17M20.65,17L16.5,16.35C17.1,15.55 17.58,14.64 17.88,13.65L20.65,17M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22Z" />
-                    </svg>
+                    <span class="material-symbols-rounded">light_mode</span>
                 </button>
                 <button class="theme-btn theme-dark-btn" id="darkModeBtn" aria-label="Modo Oscuro">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.11,19.07C15.14,23.04 8.7,23.04 4.73,19.07C0.76,15.1 0.76,8.66 4.73,4.69C5.13,4.3 5.55,3.96 6,3.64C6.75,3.11 7.93,4 7.85,4.83C7.7,6 7.82,7.25 8.24,8.44C8.94,10.45 10.45,11.96 12.46,12.66C13.65,13.08 14.9,13.2 16.07,13.05C17.06,12.92 18,13.29 18.7,13.92L18.97,15.95M17.5,14.83L17.2,14.67C15.54,15.15 13.69,14.9 12.18,14C10.15,12.8 8.65,10.82 8.35,8.5C7.94,5.4 9.17,2.27 11.5,0.22C11.5,0.22 11.5,0.22 11.47,0.21C7.81,-1.24 3.42,0.14 1.34,3.58C-0.74,7.02 -0.22,11.46 2.5,14.19C5.23,16.91 9.68,17.43 13.12,15.35C16.56,13.27 17.94,8.88 16.49,5.22C16.49,5.22 16.49,5.22 16.48,5.25C18.53,7.58 21.66,8.81 24.76,8.4C24.76,8.4 24.76,8.4 24.75,8.43C22.68,10.5 21.31,14.36 22.76,18.02C22.76,18.02 22.76,18.02 22.73,17.99C19.98,16.52 16.29,17.91 14.23,20.01C14.23,20.01 14.23,20.01 14.26,19.98C14.67,16.88 17.8,15.65 20.13,17.7C20.13,17.7 20.13,17.7 20.12,17.67C19.34,15.48 17.44,14.73 17.5,14.83Z" />
-                    </svg>
+                    <span class="material-symbols-rounded">dark_mode</span>
                 </button>
             </div>
         </div>
@@ -192,17 +190,62 @@
             <div class="card-style-options">
                 <button class="card-style-btn active" id="layoutMultiBtn">
                     <div class="layout-preview multi">
-                        <div></div><div></div><div></div><div></div><div></div><div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
                     </div>
                     <span>Múltiples Filas</span>
                 </button>
                 <button class="card-style-btn" id="layoutSingleBtn">
                     <div class="layout-preview single">
-                        <div></div><div></div><div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
                     </div>
                     <span>1 Fila</span>
                 </button>
             </div>
+        </div>
+        <div class="settings-section">
+            <h3>Vista de Colecciones</h3>
+            <div class="card-style-options">
+                <button class="card-style-btn active" id="folderStyleIconsBtn">
+                    <div class="folder-preview-mode icons">
+                        <div></div><div></div><div></div><div></div>
+                    </div>
+                    <span>Miniaturas</span>
+                </button>
+                <button class="card-style-btn" id="folderStyleCirclesBtn">
+                    <div class="folder-preview-mode circles">
+                        <div style="background: #ff5252;"></div>
+                        <div style="background: #448aff;"></div>
+                        <div style="background: #4caf50;"></div>
+                        <div style="background: #ffeb3b;"></div>
+                    </div>
+                    <span>Círculos</span>
+                </button>
+            </div>
+        </div>
+        <div class="settings-section">
+            <h3>Encabezado</h3>
+            <div class="input-group">
+                <label>Texto</label>
+                <input type="text" id="headerTextInput" placeholder="Ej. Firefox">
+            </div>
+            <div class="input-group">
+                <label>Icono (Material Symbol)</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="headerIconInput" placeholder="Ej. language" style="flex: 1;">
+                    <button class="icon-btn" id="uploadHeaderIconBtn" title="Subir imagen">
+                        <span class="material-symbols-rounded">image</span>
+                    </button>
+                </div>
+                <input type="file" id="headerIconUpload" accept="image/*" style="display: none;">
+            </div>
+            <button class="btn btn-text" id="resetHeaderBtn" style="width: 100%; margin-top: -8px;">Restablecer por defecto</button>
         </div>
         <div class="settings-section">
             <h3>Fondos de pantalla</h3>
@@ -216,7 +259,8 @@
                 <!-- Botón Sin Fondo -->
                 <button class="wallpaper-item no-wallpaper-btn" id="noWallpaperBtn" title="Sin fondo">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-                        <path d="M23.5,17L22.09,18.41L19.5,15.83V19H4V5.17L1.41,2.59L2.83,1.17L23.5,17M6,17H16.17L6,6.83V17M14.5,10V7H8.83L14.5,12.67V10Z" />
+                        <path
+                            d="M23.5,17L22.09,18.41L19.5,15.83V19H4V5.17L1.41,2.59L2.83,1.17L23.5,17M6,17H16.17L6,6.83V17M14.5,10V7H8.83L14.5,12.67V10Z" />
                     </svg>
                 </button>
                 <input type="file" id="wallpaperUploadInput" accept="image/*" style="display: none;">
@@ -227,11 +271,11 @@
     <!-- Menú Contextual Flotante -->
     <div class="context-menu" id="contextMenu">
         <button class="context-item" id="contextEditBtn">
-            <img src="assets/edit.svg" width="20" height="20" class="svg-icon">
+            <span class="material-symbols-rounded" style="font-size: 20px;">edit</span>
             <span>Editar</span>
         </button>
         <button class="context-item" id="contextDeleteBtn" style="color: #ff5252;">
-            <img src="assets/delete.svg" width="20" height="20" class="svg-icon">
+            <span class="material-symbols-rounded" style="font-size: 20px;">delete</span>
             <span>Eliminar</span>
         </button>
     </div>
@@ -242,4 +286,5 @@
     <script src="js/favorites.js"></script>
     <script src="js/collections.js"></script>
 </body>
+
 </html>

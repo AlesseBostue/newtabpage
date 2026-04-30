@@ -20,21 +20,36 @@ function loadCollections() {
 }
 
 function renderCollections(cols) {
+    const settings = JSON.parse(localStorage.getItem('m3_settings')) || { folderStyle: 'icons' };
+    const style = settings.folderStyle;
+
     foldersGrid.innerHTML = '';
     cols.forEach(col => {
         const btn = document.createElement('button');
         btn.className = 'site-item folder-item';
         
-        // Generar preview dinámico
         let previewHtml = '';
-        const previewItems = col.items.slice(0, 4);
-        previewItems.forEach((item, index) => {
-            let domain = '';
-            try { domain = new URL(item.url).hostname; } catch(e) { domain = item.url; }
-            previewHtml += `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:100%; height:100%; border-radius:50%; object-fit: cover;" onerror="this.outerHTML='<div class=\\'mini-icon\\'></div>'">`;
-        });
-        for(let i=previewItems.length; i<4; i++) {
-            previewHtml += `<div class="mini-icon"></div>`;
+        if (style === 'icons') {
+            const previewItems = col.items.slice(0, 4);
+            previewItems.forEach((item) => {
+                let domain = '';
+                try { domain = new URL(item.url).hostname; } catch(e) { domain = item.url; }
+                previewHtml += `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:100%; height:100%; border-radius:50%; object-fit: cover;" onerror="this.outerHTML='<div class=\\'mini-icon\\'></div>'">`;
+            });
+            for(let i=previewItems.length; i<4; i++) {
+                previewHtml += `<div class="mini-icon"></div>`;
+            }
+        } else {
+            // Estilo círculos (Material antiguo)
+            const colors = ['#ff5252', '#448aff', '#4caf50', '#ffeb3b', '#e91e63', '#9c27b0'];
+            const previewItems = col.items.slice(0, 4);
+            previewItems.forEach((item, index) => {
+                const color = colors[index % colors.length];
+                previewHtml += `<div class="mini-icon" style="background: ${color}; opacity: 0.8;"></div>`;
+            });
+            for(let i=previewItems.length; i<4; i++) {
+                previewHtml += `<div class="mini-icon" style="background: var(--md-sys-color-surface-container-high);"></div>`;
+            }
         }
 
         btn.innerHTML = `
@@ -49,6 +64,8 @@ function renderCollections(cols) {
         foldersGrid.appendChild(btn);
     });
 }
+
+window.addEventListener('folderStyleChanged', loadCollections);
 
 function saveCollection() {
     const name = folderNameInput.value.trim();
