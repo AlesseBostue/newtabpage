@@ -19,14 +19,23 @@
             </div>
 
             <!-- Clima Placeholder -->
-            <div class="card weather-card">
-                <div class="weather-icon">
-                    <span class="material-symbols-rounded weather-svg" style="font-size: 48px;">partly_cloudy_day</span>
+            <div class="card weather-card" id="weatherCard" style="display: none;">
+                <div class="weather-main">
+                    <div class="weather-icon">
+                        <span class="material-symbols-rounded weather-svg" id="weatherIcon"
+                            style="font-size: 48px;">partly_cloudy_day</span>
+                    </div>
+                    <div class="weather-info">
+                        <div class="weather-temp" id="weatherTemp">--°C</div>
+                        <div class="weather-desc" id="weatherDesc">Cargando...</div>
+                        <div class="weather-loc" id="weatherLoc">--</div>
+                    </div>
                 </div>
-                <div class="weather-info">
-                    <div class="weather-temp">22°C</div>
-                    <div class="weather-desc">Mayormente soleado</div>
-                    <div class="weather-loc">Mi Ciudad</div>
+
+                <div class="weather-divider"></div>
+
+                <div class="weather-forecast" id="weatherForecast">
+                    <!-- Pronóstico por horas -->
                 </div>
             </div>
 
@@ -214,7 +223,10 @@
             <div class="card-style-options">
                 <button class="card-style-btn active" id="folderStyleIconsBtn">
                     <div class="folder-preview-mode icons">
-                        <div></div><div></div><div></div><div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
                     </div>
                     <span>Miniaturas</span>
                 </button>
@@ -225,7 +237,7 @@
                         <div style="background: #4caf50;"></div>
                         <div style="background: #ffeb3b;"></div>
                     </div>
-                    <span>Círculos</span>
+                    <span>Formas</span>
                 </button>
             </div>
         </div>
@@ -245,7 +257,19 @@
                 </div>
                 <input type="file" id="headerIconUpload" accept="image/*" style="display: none;">
             </div>
-            <button class="btn btn-text" id="resetHeaderBtn" style="width: 100%; margin-top: -8px;">Restablecer por defecto</button>
+            <button class="btn btn-text" id="resetHeaderBtn" style="width: 100%; margin-top: -8px;">Restablecer por
+                defecto</button>
+        </div>
+        <div class="settings-section">
+            <h3>Clima</h3>
+            <div class="input-group">
+                <label>API Key (OpenWeatherMap)</label>
+                <input type="password" id="weatherApiKeyInput" placeholder="Pega tu API Key aquí">
+            </div>
+            <div class="input-group">
+                <label>Ciudad</label>
+                <input type="text" id="weatherCityInput" placeholder="Ej. Madrid, ES">
+            </div>
         </div>
         <div class="settings-section">
             <h3>Fondos de pantalla</h3>
@@ -280,11 +304,13 @@
         </button>
     </div>
 
+    <script src="js/utils.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/contextMenu.js"></script>
     <script src="js/clock.js"></script>
     <script src="js/favorites.js"></script>
     <script src="js/collections.js"></script>
+    <script src="js/weather.js"></script>
 </body>
 
 </html>

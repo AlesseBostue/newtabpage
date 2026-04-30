@@ -24,22 +24,26 @@ document.addEventListener('click', (e) => {
 
 // --- SETTINGS MANAGEMENT (JSON) ---
 function getSettings() {
+    const defaults = { 
+        theme: null, 
+        cardStyle: 'solid', 
+        favLayout: 'multi', 
+        folderStyle: 'icons',
+        header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' },
+        weather: { apiKey: '', city: 'Madrid, ES' }
+    };
+
     try {
-        return JSON.parse(localStorage.getItem('m3_settings')) || { 
-            theme: null, 
-            cardStyle: 'solid', 
-            favLayout: 'multi', 
-            folderStyle: 'icons',
-            header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' }
+        const saved = JSON.parse(localStorage.getItem('m3_settings')) || {};
+        // Mezclamos recursivamente o al menos el primer nivel para asegurar que existan los objetos hijos
+        return {
+            ...defaults,
+            ...saved,
+            header: { ...defaults.header, ...(saved.header || {}) },
+            weather: { ...defaults.weather, ...(saved.weather || {}) }
         };
     } catch(e) {
-        return { 
-            theme: null, 
-            cardStyle: 'solid', 
-            favLayout: 'multi', 
-            folderStyle: 'icons',
-            header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' }
-        };
+        return defaults;
     }
 }
 function saveSettings(settings) {
@@ -197,14 +201,16 @@ headerIconInput.addEventListener('input', (e) => {
 
 uploadHeaderIconBtn.addEventListener('click', () => headerIconUpload.click());
 
-headerIconUpload.addEventListener('change', (e) => {
+headerIconUpload.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            updateHeader({ iconType: 'image', iconValue: ev.target.result });
-        };
-        reader.readAsDataURL(file);
+        try {
+            // Iconos pequeños: 128x128
+            const compressedData = await compressImage(file, { maxWidth: 128, maxHeight: 128, quality: 0.8 });
+            updateHeader({ iconType: 'image', iconValue: compressedData });
+        } catch (err) {
+            console.error("Error al procesar icono:", err);
+        }
     }
 });
 
@@ -213,6 +219,32 @@ resetHeaderBtn.addEventListener('click', () => {
 });
 
 if (currentSettings.header) applyHeaderSettings(currentSettings.header);
+
+// --- WEATHER SETTINGS MANAGEMENT ---
+const weatherApiKeyInput = document.getElementById('weatherApiKeyInput');
+const weatherCityInput = document.getElementById('weatherCityInput');
+
+function applyWeatherSettings(w) {
+    if(!w) return;
+    weatherApiKeyInput.value = w.apiKey || '';
+    weatherCityInput.value = w.city || 'Madrid, ES';
+}
+
+weatherApiKeyInput.addEventListener('change', (e) => {
+    let s = getSettings();
+    s.weather.apiKey = e.target.value;
+    saveSettings(s);
+    window.dispatchEvent(new Event('weatherSettingsChanged'));
+});
+
+weatherCityInput.addEventListener('change', (e) => {
+    let s = getSettings();
+    s.weather.city = e.target.value;
+    saveSettings(s);
+    window.dispatchEvent(new Event('weatherSettingsChanged'));
+});
+
+if (currentSettings.weather) applyWeatherSettings(currentSettings.weather);
 
 
 // --- WALLPAPER MANAGEMENT (INDEXEDDB) ---
@@ -294,25 +326,24 @@ function loadWallpapers() {
     };
 }
 
-function saveWallpaper(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
+async function saveWallpaper(file) {
+    try {
+        // Fondos: Full HD max, calidad 0.7 para buen balance peso/calidad
+        const compressedData = await compressImage(file, { maxWidth: 1920, maxHeight: 1080, quality: 0.7 });
         const id = 'wp_' + Date.now();
-        const data = e.target.result;
         
         const transaction = db.transaction(['wallpapers'], 'readwrite');
         const store = transaction.objectStore('wallpapers');
-        store.add({ id, data });
+        store.add({ id, data: compressedData });
         
         transaction.oncomplete = () => {
             localStorage.setItem('m3_active_wallpaper', id);
             loadWallpapers();
             applyActiveWallpaper();
         };
-    };
-    // Reducir tamaño de imagen no es posible offline directamente sin canvas pesado,
-    // guardaremos como Base64 (está bien para unos pocos fondos).
-    reader.readAsDataURL(file);
+    } catch (err) {
+        console.error("Error al comprimir wallpaper:", err);
+    }
 }
 
 function deleteWallpaper(id) {
