@@ -27,6 +27,8 @@ function getSettings() {
     const defaults = { 
         theme: null, 
         cardStyle: 'solid', 
+        cardBlurOpacity: 60,
+        cardTransOpacity: 60,
         favLayout: 'multi', 
         folderStyle: 'icons',
         header: { text: 'Firefox', iconType: 'icon', iconValue: 'language' },
@@ -56,6 +58,14 @@ if(localStorage.getItem('m3_theme')) {
     s.theme = localStorage.getItem('m3_theme');
     saveSettings(s);
     localStorage.removeItem('m3_theme');
+}
+// Migración de opacidad única a independiente
+let s = getSettings();
+if(s.cardOpacity !== undefined) {
+    s.cardBlurOpacity = s.cardOpacity;
+    s.cardTransOpacity = s.cardOpacity;
+    delete s.cardOpacity;
+    saveSettings(s);
 }
 
 // --- THEME MANAGEMENT ---
@@ -92,8 +102,15 @@ const styleTransparentBtn = document.getElementById('styleTransparentBtn');
 function applyCardStyle(style) {
     if (style === 'solid') {
         document.documentElement.removeAttribute('data-card-style');
+        document.getElementById('cardOpacitySection').classList.add('hidden');
     } else {
         document.documentElement.setAttribute('data-card-style', style);
+        document.getElementById('cardOpacitySection').classList.remove('hidden');
+        
+        // Cargar el valor correcto para este estilo
+        const s = getSettings();
+        const value = style === 'blur' ? s.cardBlurOpacity : s.cardTransOpacity;
+        applyCardOpacity(value, style);
     }
     
     styleSolidBtn.classList.toggle('active', style === 'solid');
@@ -110,6 +127,46 @@ function applyCardStyle(style) {
 styleSolidBtn.addEventListener('click', () => applyCardStyle('solid'));
 styleBlurBtn.addEventListener('click', () => applyCardStyle('blur'));
 styleTransparentBtn.addEventListener('click', () => applyCardStyle('transparent'));
+
+const cardOpacitySlider = document.getElementById('cardOpacitySlider');
+const cardOpacityValueText = document.getElementById('cardOpacityValue');
+const resetOpacityBtn = document.getElementById('resetOpacityBtn');
+
+function applyCardOpacity(value, style = null) {
+    if (!style) style = getSettings().cardStyle;
+    if (style === 'solid') return;
+
+    // Cap at 90%
+    if (value > 90) value = 90;
+
+    const varName = style === 'blur' ? '--card-blur-opacity' : '--card-trans-opacity';
+    document.documentElement.style.setProperty(varName, `${value}%`);
+    
+    // M3 Slider Track Update (Separated for robustness)
+    const activeGradient = `linear-gradient(to right, var(--md-sys-color-primary) ${value}%, transparent ${value}%)`;
+    const inactiveGradient = `linear-gradient(to right, var(--md-sys-color-primary-container) 100%, transparent 100%)`;
+    
+    cardOpacitySlider.style.setProperty('--slider-active-gradient', activeGradient);
+    cardOpacitySlider.style.setProperty('--slider-inactive-gradient', inactiveGradient);
+    
+    cardOpacitySlider.value = value;
+    cardOpacityValueText.textContent = `${value}%`;
+    
+    let settings = getSettings();
+    const propName = style === 'blur' ? 'cardBlurOpacity' : 'cardTransOpacity';
+    if(settings[propName] !== value) {
+        settings[propName] = value;
+        saveSettings(settings);
+    }
+}
+
+cardOpacitySlider.addEventListener('input', (e) => {
+    applyCardOpacity(parseInt(e.target.value));
+});
+
+resetOpacityBtn.addEventListener('click', () => {
+    applyCardOpacity(60);
+});
 
 // --- FAV LAYOUT MANAGEMENT ---
 const layoutMultiBtn = document.getElementById('layoutMultiBtn');
@@ -134,6 +191,7 @@ layoutSingleBtn.addEventListener('click', () => applyFavLayout('single'));
 const currentSettings = getSettings();
 if (currentSettings.theme) applyTheme(currentSettings.theme);
 if (currentSettings.cardStyle) applyCardStyle(currentSettings.cardStyle);
+// applyCardStyle ya se encarga de llamar a applyCardOpacity con el valor correcto
 if (currentSettings.favLayout) applyFavLayout(currentSettings.favLayout);
 
 // --- FOLDER STYLE MANAGEMENT ---
